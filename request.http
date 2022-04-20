@@ -1,4 +1,15 @@
-POST http://localhost:5000/auth/signup
+@baseUrl = http://localhost:5000
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+    "email": "pruebas@pruebas.com",
+    "password": "Stallman"
+}
+
+### 
+# @name login
+POST {{baseUrl}}/auth/signin
 Content-Type: application/json
 
 {
@@ -7,26 +18,19 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/auth/signin
+@authToken = {{login.response.body.$.token}}
+
+POST {{baseUrl}}/notes/create
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "email": "pruebas@pruebas.com",
-    "password": "Stallman"
-}
-
-### Create Note
-POST http://localhost:5000/notes/create
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA0NTY2ODYsInN1YiI6Imxvcm96Y29AcGV0cm9wcml4LmNvbSJ9.L_mv-o9_Qym123enTgmCc_62bkwoWR8DwS6nlFl5kxU
-Content-Type: application/json
-
-{
-    "title": "Nota de DarkMaper 2",
-    "body": "Esto es una nota de DarkMaper 2"
+    "title": "Nota de DarkMaper",
+    "body": "Esto es una nota de DarkMaper"
 }
 
 ### Try create note without bearer
-POST http://localhost:5000/notes/create
+POST {{baseUrl}}/notes/create
 Content-Type: application/json
 
 {
@@ -35,5 +39,20 @@ Content-Type: application/json
 }
 
 ### Get user notes
-GET http://localhost:5000/notes
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA0NTY2ODYsInN1YiI6Imxvcm96Y29AcGV0cm9wcml4LmNvbSJ9.L_mv-o9_Qym123enTgmCc_62bkwoWR8DwS6nlFl5kxU
+GET {{baseUrl}}/notes
+Authorization: Bearer {{authToken}}
+### Get Note info
+GET {{baseUrl}}/notes/3
+Authorization: Bearer {{authToken}}
+### Update note
+PUT {{baseUrl}}/notes/update/10
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "title": "Nota de DarkMaper",
+    "body": "Esto es una nota modificada de DarkMaper"
+}
+### Delete note
+DELETE {{baseUrl}}/notes/delete/4
+Authorization: Bearer {{authToken}}
