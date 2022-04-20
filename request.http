@@ -1,0 +1,16 @@
+POST http://localhost:5000/auth/signup
+Content-Type: application/json
+
+{
+    "email": "lorozco@petroprix.com",
+    "password": "Stallman"
+}
+
+###
+POST http://localhost:5000/auth/signin
+Content-Type: application/json
+
+{
+    "email": "lorozco@petroprix.com",
+    "password": "Stallman"
+}

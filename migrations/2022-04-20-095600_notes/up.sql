@@ -1,0 +1,9 @@
+-- Your SQL goes here
+CREATE TABLE IF NOT EXISTS notes(
+    id MEDIUMINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(20) NOT NULL,
+    body TEXT NOT NULL,
+    user VARCHAR(30) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user) REFERENCES users(email) ON DELETE CASCADE
+);
