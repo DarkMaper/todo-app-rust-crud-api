@@ -2,7 +2,7 @@ POST http://localhost:5000/auth/signup
 Content-Type: application/json
 
 {
-    "email": "lorozco@petroprix.com",
+    "email": "pruebas@pruebas.com",
     "password": "Stallman"
 }
 
@@ -11,6 +11,29 @@ POST http://localhost:5000/auth/signin
 Content-Type: application/json
 
 {
-    "email": "lorozco@petroprix.com",
+    "email": "pruebas@pruebas.com",
     "password": "Stallman"
 }
+
+### Create Note
+POST http://localhost:5000/notes/create
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA0NTY2ODYsInN1YiI6Imxvcm96Y29AcGV0cm9wcml4LmNvbSJ9.L_mv-o9_Qym123enTgmCc_62bkwoWR8DwS6nlFl5kxU
+Content-Type: application/json
+
+{
+    "title": "Nota de DarkMaper 2",
+    "body": "Esto es una nota de DarkMaper 2"
+}
+
+### Try create note without bearer
+POST http://localhost:5000/notes/create
+Content-Type: application/json
+
+{
+    "title": "Nota de DarkMaper 2",
+    "body": "Esto es una nota de DarkMaper 2"
+}
+
+### Get user notes
+GET http://localhost:5000/notes
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA0NTY2ODYsInN1YiI6Imxvcm96Y29AcGV0cm9wcml4LmNvbSJ9.L_mv-o9_Qym123enTgmCc_62bkwoWR8DwS6nlFl5kxU
