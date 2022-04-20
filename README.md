@@ -17,5 +17,5 @@ port=5000
 - [ ] Notes
     - [x] Show notes from logged user
     - [x] Create notes
-    - [ ] Edit notes
-    - [ ] Delete notes
+    - [x] Edit notes
+    - [x] Delete notes
