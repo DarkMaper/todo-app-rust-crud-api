@@ -15,7 +15,7 @@ port=5000
 - [x] Create Signin and Signup routes and controllers
 - [x] Add auth guard
 - [ ] Notes
-    - [ ] Show notes from logged user
-    - [ ] Create notes
+    - [x] Show notes from logged user
+    - [x] Create notes
     - [ ] Edit notes
     - [ ] Delete notes
