@@ -24,5 +24,11 @@ fn rocket() -> _ {
     .attach(db::stage())
     .mount("/", routes![index])
     .mount("/auth", routes![signup, signin])
-    .mount("/notes", routes![create_note, get_notes])
+    .mount("/notes", routes![
+        create_note, 
+        get_notes, 
+        get_note_info, 
+        update_note,
+        delete_note
+        ])
 }
