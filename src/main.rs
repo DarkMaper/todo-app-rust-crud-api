@@ -10,8 +10,7 @@ pub mod guards;
 
 use crate::guards::auth::authentication_guard::*;
 use crate::controllers::user_controllers::*;
-
-
+use crate::controllers::note_controllers::*;
 
 #[get("/")]
 fn index(token: Token) -> String {
@@ -25,4 +24,5 @@ fn rocket() -> _ {
     .attach(db::stage())
     .mount("/", routes![index])
     .mount("/auth", routes![signup, signin])
+    .mount("/notes", routes![create_note, get_notes])
 }
