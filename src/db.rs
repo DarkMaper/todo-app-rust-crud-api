@@ -8,7 +8,6 @@ pub struct Db(diesel::MysqlConnection);
 
 embed_migrations!();
 
-
 async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
 
     let conn = Db::get_one(&rocket).await.expect("database connection");
