@@ -5,7 +5,7 @@ use rocket::serde::{Serialize, Deserialize};
 #[table_name="notes"]
 pub struct Note {
     #[serde(skip_deserializing)]
-    pub id: Option<i32>,
+    pub id: Option<String>,
     pub title: String,
     pub body: String,
     #[serde(skip_deserializing)]
@@ -14,7 +14,7 @@ pub struct Note {
 
 table! {
     notes (id) {
-        id -> Nullable<Int4>,
+        id -> Nullable<Varchar>,
         title -> Varchar,
         body -> Varchar,
         user -> Varchar,

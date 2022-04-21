@@ -7,6 +7,7 @@ type Result<T,E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 
 use crate::models::note::*;
 use crate::db::Db;
+use uuid::Uuid;
 
 use crate::guards::auth::authentication_guard::Token;
 
@@ -17,7 +18,7 @@ pub async fn create_note(db: Db, token: Token, note_data: Json<Note>) -> Result<
     let note_values = note_data.clone();
 
     let new_note = Note {
-        id: None,
+        id: Some(Uuid::new_v4().to_string()),
         title: note_values.title,
         body: note_values.body,
         user: user
@@ -46,7 +47,7 @@ pub async fn get_notes(db: Db, token: Token) -> Result<Json<Vec<Note>>> {
 }
 
 #[get("/<id>")]
-pub async fn get_note_info(db: Db, token: Token, id: i32) -> Result<Json<Note>, NotFound<String>> {
+pub async fn get_note_info(db: Db, token: Token, id: String) -> Result<Json<Note>, NotFound<String>> {
     let user = token.0.claims.sub;
 
     let note = db.run(move |conn| {
@@ -66,7 +67,7 @@ pub async fn get_note_info(db: Db, token: Token, id: i32) -> Result<Json<Note>, 
 }
 
 #[put("/update/<id>", data = "<note_data>")]
-pub async fn update_note(db: Db, token: Token, id: i32, note_data: Json<Note>) -> Result<Created<Json<Note>>, NotFound<String>> {
+pub async fn update_note(db: Db, token: Token, id: String, note_data: Json<Note>) -> Result<Created<Json<Note>>, NotFound<String>> {
 
     let user = token.0.claims.sub;
     let note_values = note_data.clone();
@@ -93,7 +94,7 @@ pub async fn update_note(db: Db, token: Token, id: i32, note_data: Json<Note>) -
 }
 
 #[delete("/delete/<id>")]
-pub async fn delete_note(db: Db, token: Token, id: i32) -> Result<Option<()>, NotFound<String>> {
+pub async fn delete_note(db: Db, token: Token, id: String) -> Result<Option<()>, NotFound<String>> {
     let user = token.0.claims.sub;
 
     let affected = db.run(move |conn| {

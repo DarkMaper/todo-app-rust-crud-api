@@ -1,12 +1,12 @@
-use rocket::response::{Debug, status::Created};
+use rocket::response::{Debug, status::{Created, Conflict, Unauthorized}};
 use rocket::serde::{Serialize, Deserialize};
-use rocket::http::Status;
 use rocket::serde::json::Json;
-use bcrypt::{hash, verify};
+use bcrypt::{hash, verify, DEFAULT_COST};
 
 use chrono::prelude::*;
 
 use jsonwebtoken::{encode, Header, EncodingKey};
+use uuid::Uuid;
 
 use crate::diesel::prelude::*;
 
@@ -15,20 +15,20 @@ type Result<T,E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 use crate::models::user::*;
 use crate::db::Db;
 
-async fn check_user_exists(db: &Db, email: String) -> Result<Json<User>,bool> {
+async fn check_user_exists(db: &Db, email: String) -> Option<Json<User>> {
 
     let user = db.run(move |conn| {
         users::table
             .filter(users::email.eq(email.to_owned()))
             .first(conn)
-    }).await.map(Json);
+    }).await.map(Json).ok();
 
     match user {
-        Ok(usr) => {
-            Ok(usr)
+        Some(usr) => {
+            Some(usr)
         },
-        Err(_) => {
-            Err(false)
+        None => {
+            None
         }
     }
 }
@@ -48,56 +48,66 @@ pub struct Claims {
 }
 
 #[post("/signup", data = "<signin>")]
-pub async fn signup(db: Db, signin: Json<User>) -> Result<Created<Json<String>>, (Status, String)> {
+pub async fn signup(db: Db, signin: Json<User>) -> Result<Created<String>, Conflict<String>> {
 
     let user_value = signin.clone();
 
     let check_user = check_user_exists(&db, user_value.email.clone()).await;
 
     match check_user {
-        Ok(_) => {
-            return Err((Status::Conflict, "Ya existe un usuario con ese email".to_string()));
+        Some(_) => {
+            return Err(Conflict(Some("Email already in use".to_string())));
         },
-        Err(_) => {
-            let hashed_password = hash(&user_value.password, 12).unwrap();
+        None => {
+            let hashed_password = hash(&user_value.password, DEFAULT_COST).unwrap();
             let new_user = User {
+                id: Some(Uuid::new_v4().to_string()),
                 email: user_value.email.clone(),
                 password: hashed_password
             };
-                
-            match db.run(move |conn| {
+
+            let affected = db.run(move |conn| {
                 diesel::insert_into(users::table)
                     .values(new_user)
                     .execute(conn)
-            }).await
+            }).await.ok();
+                
+            match affected
             {
-                Ok(_) => return Ok(Created::new("/").body(Json("{ message: 'User created'}".to_string()))),
-                Err(msg) => return Err((Status::new(200), msg.to_string()))
+                Some(data) => {
+                    println!("{:?}", data);
+                    return Ok(Created::new("/").body("User created".to_string()));
+                },
+                None => {
+                    return Err(Conflict(Some("Email already in use".to_string())));
+                }
             }
         }
     };
 }
 
 #[post("/signin", data = "<login_form>")]
-pub async fn signin(db: Db, login_form: Json<User>) -> Result<Json<JWT>, (Status, String)> {
+pub async fn signin(db: Db, login_form: Json<User>) -> Result<Json<JWT>, Unauthorized<String>> {
     let user_value = login_form.clone();
 
     let check_user = check_user_exists(&db, user_value.email.clone()).await;
     
     match check_user { 
-        Ok(user) => {
+        Some(user) => {
             let password_match = verify(user_value.password, &user.password);
 
             match password_match {
                 Ok(result) => {
-                    if !result { return Err((Status::Unauthorized, "El usuario o la contraseña no son correctos".to_string())); }
+                    if !result { 
+                        return Err(Unauthorized(Some("Email or password are incorrect".to_string())));
+                    }
                     let expiration = Utc::now()
                         .checked_add_signed(chrono::Duration::minutes(15))
                         .expect("valid timestamp")
                         .timestamp();
 
                     let claims = Claims {
-                        sub: user_value.email.to_string(),
+                        sub: user.id.clone().unwrap(),
                         exp: expiration as usize
                     };
 
@@ -108,12 +118,12 @@ pub async fn signin(db: Db, login_form: Json<User>) -> Result<Json<JWT>, (Status
                     Ok(Json(jwt))
                 },
                 Err(_) => {
-                    return Err((Status::Unauthorized, "El usuario o la contraseña no son correctos".to_string()));
+                    return Err(Unauthorized(Some("Email or password are incorrect".to_string())));
                 }
             }
         },
-        Err(_) => {
-            return Err((Status::Unauthorized, "El usuario o la contraseña no son correctos".to_string()));
+        None => {
+            return Err(Unauthorized(Some("Email or password are incorrect".to_string())));
         }
     }
 
