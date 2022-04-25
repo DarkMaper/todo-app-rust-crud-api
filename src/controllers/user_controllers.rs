@@ -44,7 +44,8 @@ pub struct JWT {
 #[serde(crate = "rocket::serde")]
 pub struct Claims {
     pub exp: usize,
-    pub sub: String
+    pub sub: String,
+    pub email: String,
 }
 
 #[post("/signup", data = "<signin>")]
@@ -108,7 +109,8 @@ pub async fn signin(db: Db, login_form: Json<User>) -> Result<Json<JWT>, Unautho
 
                     let claims = Claims {
                         sub: user.id.clone().unwrap(),
-                        exp: expiration as usize
+                        exp: expiration as usize,
+                        email: user.email.clone()
                     };
 
                     let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(b"secret")).unwrap();
