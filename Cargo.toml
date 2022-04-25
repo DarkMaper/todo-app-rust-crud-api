@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 rocket = { version="0.5.0-rc.1", features=["json"] }
+rocket_cors = "0.6.0-alpha1"
 uuid = { version = "1.0.0", features = [ "v4", "fast-rng", "macro-diagnostics" ]}
 jsonwebtoken = "8.1.0"
 diesel = {version = "1.4.8", features = ["mysql", "r2d2"] }
