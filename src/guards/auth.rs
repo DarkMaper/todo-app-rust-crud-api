@@ -24,13 +24,13 @@ pub mod authentication_guard {
             let authorization_header = request.headers().get_one("authorization");
 
             match authorization_header {
-                Some(token) => {
-                    let has_bearer = token.contains("Bearer");
+                Some(data) => {
+                    let has_bearer = data.contains("Bearer");
                     if !has_bearer {
                         return request::Outcome::Failure((Status::BadRequest, ApiTokenError::Missing));
                     };
 
-                    let header_split:Vec<&str> = token.split_whitespace().collect();
+                    let header_split:Vec<&str> = data.split_whitespace().collect();
 
                     let token = decode::<Claims>(&header_split[1], &DecodingKey::from_secret(b"secret"), &Validation::default());
 
