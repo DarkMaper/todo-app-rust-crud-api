@@ -8,13 +8,14 @@ App written in Rust using Rocket for api server and Diesel MySQL.
 url = "mysql://username:password@host/database"
 
 [default]
-port=5000
+port=3000
 ```
 ## Todo list
 
 - [x] Connection to Database
 - [x] Create Signin and Signup routes and controllers
-- [x] Add auth guard
+    - [x] Refresh Token System
+- [x] Add auth guard for JWT
 - [x] Notes
     - [x] Show notes from logged user
     - [x] Create notes
