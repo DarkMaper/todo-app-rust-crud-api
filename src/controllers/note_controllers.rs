@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use crate::guards::auth::authentication_guard::Token;
 
-#[post("/create", data = "<note_data>")]
+#[post("/createNote", data = "<note_data>")]
 pub async fn create_note(db: Db, token: Token, note_data: Json<Note>) -> Result<Created<Json<Note>>> {
     let user = token.0.claims.sub;
 
@@ -20,7 +20,7 @@ pub async fn create_note(db: Db, token: Token, note_data: Json<Note>) -> Result<
     let new_note = Note {
         id: Some(Uuid::new_v4().to_string()),
         title: note_values.title,
-        body: note_values.body,
+        content: note_values.content,
         user: user
     };
 
@@ -66,7 +66,7 @@ pub async fn get_note_info(db: Db, token: Token, id: String) -> Result<Json<Note
     }
 }
 
-#[put("/update/<id>", data = "<note_data>")]
+#[put("/updateNote/<id>", data = "<note_data>")]
 pub async fn update_note(db: Db, token: Token, id: String, note_data: Json<Note>) -> Result<Created<Json<Note>>, NotFound<String>> {
 
     let user = token.0.claims.sub;
@@ -75,7 +75,7 @@ pub async fn update_note(db: Db, token: Token, id: String, note_data: Json<Note>
     let affected = db.run(move |conn| {
         diesel::update(notes::table)
             .filter(notes::user.eq(user).and(notes::id.eq(id)))
-            .set((notes::title.eq(note_values.title), notes::body.eq(note_values.body)))
+            .set((notes::title.eq(note_values.title), notes::content.eq(note_values.content)))
             .execute(conn)
     }).await.ok();
 
@@ -93,7 +93,7 @@ pub async fn update_note(db: Db, token: Token, id: String, note_data: Json<Note>
     }
 }
 
-#[delete("/delete/<id>")]
+#[delete("/deleteNote/<id>")]
 pub async fn delete_note(db: Db, token: Token, id: String) -> Result<Option<()>, NotFound<String>> {
     let user = token.0.claims.sub;
 
