@@ -6,14 +6,14 @@ use rocket::serde::{Serialize, Deserialize};
 pub struct User {
     #[serde(skip_deserializing)]
     pub id: Option<String>,
-    pub email: String,
+    pub username: String,
     pub password: String
 }
 
 table! {
     users (id) {
         id -> Nullable<Varchar>,
-        email -> Varchar,
+        username -> Varchar,
         password -> Varchar,
     }
 }
