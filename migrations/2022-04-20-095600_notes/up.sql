@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS notes(
     id VARCHAR(36) NOT NULL,
     title VARCHAR(20) NOT NULL,
-    body TEXT NOT NULL,
+    content TEXT NOT NULL,
     user VARCHAR(36) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE

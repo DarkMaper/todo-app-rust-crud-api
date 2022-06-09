@@ -7,7 +7,7 @@ pub struct Note {
     #[serde(skip_deserializing)]
     pub id: Option<String>,
     pub title: String,
-    pub body: String,
+    pub content: String,
     #[serde(skip_deserializing)]
     pub user: String
 }
@@ -16,7 +16,7 @@ table! {
     notes (id) {
         id -> Nullable<Varchar>,
         title -> Varchar,
-        body -> Varchar,
+        content -> Varchar,
         user -> Varchar,
     }
 }
