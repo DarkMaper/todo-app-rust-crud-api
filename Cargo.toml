@@ -14,6 +14,7 @@ diesel = {version = "1.4.8", features = ["mysql", "r2d2"] }
 diesel_migrations = "1.4.0"
 chrono = "0.4.19"
 bcrypt = "0.12.1"
+dotenvy = "0.15.1"
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.1"
