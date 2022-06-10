@@ -4,15 +4,6 @@
 App written in Rust using Rocket for API server and Diesel MySQL.
 
 ---
-## Rocket config
-```toml
-# Rocket.toml
-[global.databases.todoapp]
-url = "mysql://username:password@host/database"
-
-[default]
-port=3000
-```
 ## Todo list
 
 - [x] Connection to Database
