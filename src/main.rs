@@ -3,7 +3,7 @@
 #[macro_use] extern crate diesel_migrations;
 #[macro_use] extern crate diesel;
 
-
+use dotenvy::dotenv;
 pub mod models;
 
 pub mod db;
@@ -20,6 +20,7 @@ use crate::catchers::*;
 
 #[launch]
 fn rocket() -> _ {
+    dotenv().ok();
     rocket::build()
     .attach(db::stage())
     .mount("/api/auth", routes![signup, signin, refresh_token, logout])
